@@ -1,0 +1,31 @@
+{
+	"name": "ezmon",
+	"version": "1.0.0",
+	"module": "server.js",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"install-client": "cd client && bun install",
+		"install-server": "bun install",
+		"dev:client": "cd client && bun dev",
+		"dev:server": "bun --env-file .env --watch src/server.js",
+		"dev:worker": "bun --watch src/worker.js",
+		"dev": "conc -n \"CLIENT,API,WORKER\" -c \"cyan,magenta,yellow\" \"npm:dev:client\" \"npm:dev:server\" \"npm:dev:worker\"",
+		"build-client": "cd client && bun run build",
+		"start": "pm2 start ecosystem.config.js --env prod",
+		"stop": "pm2 stop all",
+		"logs": "pm2 monit"
+	},
+	"dependencies": {
+		"@elysiajs/openapi": "^1.4.11",
+		"@elysiajs/static": "^1.4.6",
+		"cron": "^4.3.3",
+		"deadslog": "^1.2.2",
+		"elysia": "^1.4.15",
+		"mongoose": "^8.19.2"
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"concurrently": "^9.2.1"
+	}
+}
