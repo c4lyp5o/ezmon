@@ -10,7 +10,7 @@ RUN bun install
 # Copy client separately and install client dependencies + build
 COPY client ./client
 WORKDIR /app/client
-RUN bun install && bun build
+RUN bun install && bun build-client
 
 # Move built files to /app/dist in the builder stage
 RUN mkdir -p /app/dist && mv ../dist/* /app/dist/
