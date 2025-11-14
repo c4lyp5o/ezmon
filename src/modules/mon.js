@@ -20,7 +20,7 @@ const monModule = new Elysia({ prefix: "/api/v1/mon" })
 				return { message: "Site added successfully" };
 			} catch (error) {
 				console.error(error);
-				status(500, { message: "Internal server error" });
+				return status(409, { message: "Site already exists" });
 			}
 		},
 		{
@@ -42,7 +42,7 @@ const monModule = new Elysia({ prefix: "/api/v1/mon" })
 				return { message: "Site deleted successfully" };
 			} catch (error) {
 				console.error(error);
-				status(500, { message: "Internal server error" });
+				return status(500, { message: "Internal server error" });
 			}
 		},
 		{
