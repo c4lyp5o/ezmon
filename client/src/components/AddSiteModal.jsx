@@ -44,10 +44,10 @@ const addSiteAction = async (_prevState, formData) => {
 			};
 		}
 
-		console.log("submitting");
-		console.log(formData.get("hideUrl"));
+		// console.log("submitting");
+		// console.log(formData.get("hideUrl"));
 		const hideUrlStatus = formData.get("hideUrl") === "on";
-		console.log(hideUrlStatus);
+		// console.log(hideUrlStatus);
 		formData.set("hideUrl", hideUrlStatus);
 
 		const res = await fetch("/api/v1/mon", {
@@ -56,13 +56,12 @@ const addSiteAction = async (_prevState, formData) => {
 		});
 
 		if (!res.ok) {
-			const payload = await res
-				.json()
-				.catch(() => ({ message: "Add site failed" }));
-			return { message: payload.message || "Add site failed", error: true };
+			const payload = await res.json();
+			return { message: payload.message, error: true };
 		}
+
 		const payload = await res.json();
-		return { message: payload.message || "Add site success", error: false };
+		return { message: payload.message, error: false };
 	} catch (err) {
 		console.error("Reply failed:", err);
 		return { message: "An unexpected error occurred.", error: true };
