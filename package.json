@@ -1,8 +1,7 @@
 {
 	"name": "ezmon",
 	"version": "1.0.0",
-	"module": "server.js",
-	"type": "module",
+	"module": "./src/server.js",
 	"private": true,
 	"scripts": {
 		"install-client": "cd client && bun install",
