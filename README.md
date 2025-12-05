@@ -62,7 +62,7 @@ bun dev
 
 This concurrently runs:
 
-* **Client:** React + Vite (`bun dev:client`)
+* **Client:** React (`bun dev:client`)
 * **Server:** Bun backend (`bun dev:server`)
 * **Worker:** Background jobs (`bun dev:worker`)
 
@@ -102,10 +102,10 @@ bun logs      # Monitor logs in real-time
 docker build -t ezmon .
 ```
 
-**Run the container:**
+**Run the compose script:**
 
 ```bash
-docker run -d -p 5000:5000 --env-file .env ezmon
+docker compose up -d
 ```
 
 * Frontend available at `/dist`
@@ -127,7 +127,7 @@ docker run -d -p 5000:5000 --env-file .env ezmon
 ```
 /ezmon
 ├─ /client       # React frontend
-├─ /src          # Backend code (Bun + Elysia)
+├─ /src          # Backend code
 ├─ package.json
 ├─ ecosystem.config.js  # PM2 config
 ├─ Dockerfile
