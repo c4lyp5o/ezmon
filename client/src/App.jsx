@@ -119,7 +119,7 @@ const App = () => {
 	const { data, error, isLoading, mutate } = useSWR("/api/v1/mon", fetcher, {
 		refreshInterval: 60000,
 	});
-	const [selectedThemeName, setSelectedThemeName] = useState(themes[0].name); // This hook is being called conditionally, but all hooks must be called in the exact same order in every component render.
+	const [selectedThemeName, setSelectedThemeName] = useState(themes[0].name);
 	const currentTheme =
 		themes.find((t) => t.name === selectedThemeName) || themes[0];
 
@@ -131,7 +131,7 @@ const App = () => {
 			<div className="max-w-2xl mx-auto">
 				{/* Header */}
 				<header className="flex justify-between items-center mb-6 py-4 flex-wrap gap-2">
-					<h1 className="text-2xl font-bold">EZMON - Monitor everything!</h1>
+					<h1 className="text-2xl font-bold">EZMON - monitor anything!</h1>
 					<div className="flex items-center gap-2">
 						<Select
 							onValueChange={setSelectedThemeName}
@@ -154,14 +154,26 @@ const App = () => {
 
 				{/* Site List */}
 				<main className="flex flex-col gap-4">
-					{data.map((site) => (
-						<SiteCard
-							key={site._id}
-							site={site}
-							mutate={mutate}
-							theme={currentTheme}
-						/>
-					))}
+					{data && data.length > 0 ? (
+						data.map((site) => (
+							<SiteCard
+								key={site._id}
+								site={site}
+								mutate={mutate}
+								theme={currentTheme}
+							/>
+						))
+					) : (
+						<div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 py-16 text-center opacity-80 transition-opacity hover:opacity-100 dark:border-gray-700 dark:bg-gray-800/50">
+							<span className="mb-4 text-6xl">💤</span>
+							<h3 className="text-xl font-bold text-gray-700 dark:text-gray-200">
+								No site added for monitoring
+							</h3>
+							<p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+								It looks a little too peaceful in here.
+							</p>
+						</div>
+					)}
 				</main>
 			</div>
 		</div>
