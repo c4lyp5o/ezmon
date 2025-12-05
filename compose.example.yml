@@ -1,0 +1,20 @@
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ezmon
+      MONGO_INITDB_ROOT_PASSWORD: ezmon
+
+  ezmon:
+    image: ezmon:latest
+    container_name: ezmon
+    depends_on:
+      - mongo
+    restart: always
+
+volumes:
+  mongo_data:
