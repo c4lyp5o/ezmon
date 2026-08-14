@@ -22,7 +22,12 @@ A **lightweight, high-performance site monitoring tool** built with Bun, React, 
 * 🧩 **Worker Management** – Background tasks handled with PM2.
 * 🛠️ **Minimal & Lightweight** – Only what you need, no bloat.
 * 🛡️ **Production-Ready** – Docker-ready, cluster mode, autorestart, environment support.
-* 🧑‍💻 **Developer-Friendly** – Vite + React front-end, Bun dev tooling, concurrent workflows.
+* 🧑‍💻 **Developer-Friendly** – Vite + React front-end, Bun dev tooling, conc
+* ⏱️ **Per-site check interval** – each site polls on its own cadence (15s–3600s), no global 1-min cron.
+* 📈 **Uptime % + latency history** – 7/30/90-day uptime via daily rollups; response-time sparkline per site.
+* 🔔 **Alerting** – Telegram / Discord / Slack / email on status change and SSL-expiry thresholds.
+* 🛠️ **Advanced checks** – custom HTTP method, headers, expected status, timeout, and SSL-cert monitoring.
+* 🔗 **Public status API + SVG badge** – shareable status page & shield badge for readmes.
 
 ---
 
