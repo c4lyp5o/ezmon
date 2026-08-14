@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Trash2, AlertCircle, ShieldAlert } from "lucide-react";
+import { Trash2, AlertCircle, ShieldAlert, Activity } from "lucide-react";
 import HeartbeatBar from "./HeartbeatBar";
 import Sparkline from "./Sparkline";
 import DeleteSiteModal from "./DeleteSiteModal";
@@ -22,6 +22,9 @@ const statusAnalyzer = (heartbeats) => {
 	if (statuses.every((s) => s >= 400)) return "down";
 	return "failing";
 };
+
+const glowClass = (status) =>
+	status === "up" ? "live-glow-up" : status === "down" ? "live-glow-down" : "live-glow-failing";
 
 const SiteCard = ({ site, uptime, mutate, theme }) => {
 	const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
@@ -78,20 +81,27 @@ const SiteCard = ({ site, uptime, mutate, theme }) => {
 	};
 
 	return (
-		<Card className={cn(theme.card.bg, theme.card.text, theme.card.font)}>
-			<CardHeader>
+		<div className={cn("glass rounded-2xl overflow-hidden", theme.card.text, theme.card.font)}>
+			<CardHeader className="pb-2">
 				<div className="flex justify-between items-start gap-4">
-					<div className="flex items-start gap-2">
-						<div>
-							<CardTitle className={cn("text-lg", theme.card.text)}>
+					<div className="flex items-start gap-2 min-w-0">
+						{/* Live status dot */}
+						<span className={cn("mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full",
+							siteStatus === "up" ? "bg-green-500 text-green-500" :
+							siteStatus === "down" ? "bg-red-500 text-red-500" : "bg-yellow-400 text-yellow-400",
+							"pulse-dot")} />
+						<div className="min-w-0">
+							<CardTitle className={cn("text-lg truncate", theme.card.text)}>
 								{site.name}
 							</CardTitle>
 							{!site.hideUrl ? (
 								<a href={site.url} target="_blank" rel="noopener noreferrer"
-									className="text-sm text-muted-foreground transition-colors hover:underline hover:text-primary">
+									className="text-sm text-muted-foreground truncate block hover:underline hover:text-primary transition-colors">
 									{site.url}
 								</a>
-							) : null}
+							) : (
+								<span className="text-sm text-muted-foreground">URL hidden</span>
+							)}
 
 							{/* Uptime + latency chips */}
 							<div className="flex items-center gap-3 mt-2 flex-wrap">
@@ -101,34 +111,27 @@ const SiteCard = ({ site, uptime, mutate, theme }) => {
 									</span>
 								)}
 								{avgLatency != null && (
-									<span className="text-xs text-muted-foreground">{avgLatency}ms avg</span>
+									<span className="text-xs text-muted-foreground inline-flex items-center gap-1">
+										<Activity className="h-3 w-3" />{avgLatency}ms avg
+									</span>
 								)}
 								{check.interval != null && (
 									<span className="text-xs text-muted-foreground">every {check.interval}s</span>
 								)}
 								{check.ssl && (
 									<span className={cn("text-xs inline-flex items-center gap-1 font-semibold",
-										ssl.expired ? "text-red-600" : ssl.warning ? "text-amber-600" : "text-green-600")}>
+										ssl.expired ? "text-red-400" : ssl.warning ? "text-amber-400" : "text-green-400")}>
 										<ShieldAlert className="h-3 w-3" />
 										{ssl.expired ? "SSL expired" : ssl.warning ? `SSL in ${ssl.daysRemaining}d` : "SSL ok"}
 									</span>
 								)}
 							</div>
 						</div>
-
-						<Button variant="ghost" size="icon"
-							className={`h-8 w-8 shrink-0 ${isConfirmingDelete ? "text-destructive" : ""}`}
-							onClick={handleDeleteClick}
-							onMouseLeave={() => setIsConfirmingDelete(false)}>
-							{isConfirmingDelete ? <AlertCircle className="h-4 w-4 text-red-500" /> : <Trash2 className="h-4 w-4" />}
-							<span className="sr-only">Delete site</span>
-						</Button>
-						{deleteError && <p className="text-destructive text-sm mt-2">{deleteError}</p>}
 					</div>
 
 					<div className="text-right shrink-0">
 						<Badge variant={getBadgeVariant(siteStatus)}
-							className={cn("capitalize", {
+							className={cn("capitalize", glowClass(siteStatus), {
 								[theme.badge.up]: siteStatus === "up",
 								[theme.badge.failing]: siteStatus === "failing",
 								[theme.badge.down]: siteStatus === "down",
@@ -136,22 +139,31 @@ const SiteCard = ({ site, uptime, mutate, theme }) => {
 							{siteStatus}
 						</Badge>
 						{(siteStatus === "down" || siteStatus === "failing") && site.lastStatusChangeAt && (
-							<p className={cn("text-xs", "mt-2", theme.card.text)}>
+							<p className="text-xs mt-2 text-muted-foreground">
 								since {new Date(site.lastStatusChangeAt).toLocaleString()}
 							</p>
 						)}
 					</div>
+
+					<Button variant="ghost" size="icon"
+						className={cn("h-8 w-8 shrink-0", isConfirmingDelete && "text-destructive")}
+						onClick={handleDeleteClick}
+						onMouseLeave={() => isConfirmingDelete && setIsConfirmingDelete(false)}>
+						{isConfirmingDelete ? <AlertCircle className="h-4 w-4 text-red-400" /> : <Trash2 className="h-4 w-4" />}
+						<span className="sr-only">Delete site</span>
+					</Button>
 				</div>
+				{deleteError && <p className="text-destructive text-sm mt-2">{deleteError}</p>}
 			</CardHeader>
 
-			<CardContent className="pt-2">
+			<CardContent className="pt-1">
 				<HeartbeatBar heartbeats={heartbeats} themeHeartbeat={theme.heartbeat} />
 				<Sparkline heartbeats={heartbeats} themeSpark={theme.spark} />
 			</CardContent>
 
 			<DeleteSiteModal siteName={site.name} open={isModalOpen} onOpenChange={handleModalOpenChange}
 				onConfirm={handleConfirmDelete} isLoading={isLoading} error={deleteError} />
-		</Card>
+		</div>
 	);
 };
 

@@ -30,10 +30,7 @@ const startServer = async () => {
 		.get("/", () => file("./dist/index.html"))
 		.use(openapi())
 		.use(monModule)
-		.use(publicModule)
-		.get("*", ({ status }) => {
-			status(404, { message: "Not found" });
-		});
+		.use(publicModule);
 
 	try {
 		app.listen(PORT);
