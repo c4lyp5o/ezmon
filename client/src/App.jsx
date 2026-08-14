@@ -32,6 +32,9 @@ const themes = [
 			noData: "bg-muted/30",
 			style: "rounded-full animate-pulse",
 		},
+		spark: { stroke: "#22c55e", down: "#ef4444" },
+		uptimeGood: "text-green-600",
+		uptimeBad: "text-red-600",
 	},
 	{
 		name: "Dark Forest",
@@ -52,6 +55,9 @@ const themes = [
 			noData: "bg-gray-700",
 			style: "rounded-md animate-pulse shadow-sm",
 		},
+		spark: { stroke: "#22c55e", down: "#ef4444" },
+		uptimeGood: "text-green-400",
+		uptimeBad: "text-red-400",
 	},
 	{
 		name: "Cyberpunk",
@@ -72,6 +78,9 @@ const themes = [
 			noData: "bg-gray-800",
 			style: "rounded-full animate-bounce",
 		},
+		spark: { stroke: "#e879f9", down: "#ef4444" },
+		uptimeGood: "text-fuchsia-400",
+		uptimeBad: "text-red-500",
 	},
 	{
 		name: "Solar Desert",
@@ -92,6 +101,9 @@ const themes = [
 			noData: "bg-amber-100",
 			style: "rounded-md animate-pulse",
 		},
+		spark: { stroke: "#f59e0b", down: "#dc2626" },
+		uptimeGood: "text-amber-700",
+		uptimeBad: "text-red-700",
 	},
 	{
 		name: "Midnight Neon",
@@ -112,6 +124,9 @@ const themes = [
 			noData: "bg-gray-800",
 			style: "rounded-lg animate-ping",
 		},
+		spark: { stroke: "#22d3ee", down: "#f0a" },
+		uptimeGood: "text-cyan-300",
+		uptimeBad: "text-pink-400",
 	},
 ];
 
@@ -126,10 +141,11 @@ const App = () => {
 	if (isLoading) return <Loading />;
 	if (error) return <ErrorPage message={error.message} />;
 
+	const sites = data?.sites || [];
+
 	return (
 		<div className="min-h-screen bg-background text-foreground p-4">
 			<div className="max-w-2xl mx-auto">
-				{/* Header */}
 				<header className="flex justify-between items-center mb-6 py-4 flex-wrap gap-2">
 					<h1 className="text-2xl font-bold">EZMON - monitor anything!</h1>
 					<div className="flex items-center gap-2">
@@ -148,17 +164,21 @@ const App = () => {
 								))}
 							</SelectContent>
 						</Select>
-						<AddSiteModal />
+						<AddSiteModal
+							key={sites.length}
+							onAdd={() => mutate()}
+							theme={currentTheme}
+						/>
 					</div>
 				</header>
 
-				{/* Site List */}
 				<main className="flex flex-col gap-4">
-					{data && data.length > 0 ? (
-						data.map((site) => (
+					{sites.length > 0 ? (
+						sites.map((site) => (
 							<SiteCard
 								key={site._id}
 								site={site}
+								uptime={site.uptime}
 								mutate={mutate}
 								theme={currentTheme}
 							/>
