@@ -1,19 +1,18 @@
-import { AlertCircle } from "lucide-react";
+import { Screen } from "@/ez/motion";
+import { btn, cx, Notice } from "@/ez/ui";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
-const ErrorPage = ({ message }) => {
-	return (
-		<div className="flex justify-center items-center h-screen">
-			<Alert variant="destructive" className="max-w-md">
-				<AlertCircle className="h-4 w-4" />
-				<AlertTitle>Error</AlertTitle>
-				<AlertDescription>
-					{message || "An unexpected error occurred."}
-				</AlertDescription>
-			</Alert>
-		</div>
-	);
-};
+const ErrorPage = ({ message }) => (
+	<div className="flex h-dvh items-center justify-center px-4">
+		<Screen className="w-full max-w-md">
+			<Notice tone="bad">
+				<div className="font-medium">Could not load the monitors</div>
+				<div className="mt-0.5 text-[12px] text-mute">{message || "An unexpected error occurred."}</div>
+				<button type="button" onClick={() => window.location.reload()} className={cx(btn.sm, btn.ghost, "mt-3")}>
+					Try again
+				</button>
+			</Notice>
+		</Screen>
+	</div>
+);
 
 export default ErrorPage;
