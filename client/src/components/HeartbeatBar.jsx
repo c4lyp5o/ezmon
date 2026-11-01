@@ -1,47 +1,35 @@
-import { cn } from "@/lib/utils";
+import { motion } from "motion/react";
+import { useReducedMotion } from "@/ez/motion";
+import { cx } from "@/ez/ui";
 
-const getStatusColor = (status, themeHeartbeat) => {
-	if (status >= 200 && status < 300) return themeHeartbeat.up;
-	if (status >= 400) return themeHeartbeat.down;
-	return themeHeartbeat.failing;
-};
+// Ten slots, oldest → newest. Colour is status, and every slot carries the
+// exact code, response time and time in its title — never colour alone.
+const tone = (status) => (status >= 200 && status < 300 ? "bg-ok" : status >= 400 ? "bg-bad" : "bg-warn");
 
-const HeartbeatBar = ({ heartbeats = [], themeHeartbeat }) => {
-	const latestHeartbeats = [...heartbeats].reverse();
-	const displayBeats = Array(10).fill(null);
-	const startIndex = Math.max(0, 10 - latestHeartbeats.length);
-	for (let i = 0; i < latestHeartbeats.length; i++) {
-		displayBeats[startIndex + i] = latestHeartbeats[i];
-	}
-	const lastBeatIndex = displayBeats.map((b) => !!b).lastIndexOf(true);
+const HeartbeatBar = ({ heartbeats = [] }) => {
+	const reduce = useReducedMotion();
+	const latest = [...heartbeats].reverse();
+	const slots = Array(10).fill(null);
+	const start = Math.max(0, 10 - latest.length);
+	for (let i = 0; i < latest.length && start + i < 10; i++) slots[start + i] = latest[i];
 
 	return (
-		<div className="flex w-full gap-1 h-6">
-			{displayBeats.map((beat, index) => {
-				const isLastBeat = index === lastBeatIndex;
-				const color = beat
-					? getStatusColor(beat.status, themeHeartbeat)
-					: themeHeartbeat.noData;
-
-				return (
-					<div
-						key={beat?._id || index}
-						className={cn(
-							"flex-1 transition-all duration-300",
-							color,
-							themeHeartbeat.style,
-							isLastBeat && beat ? "scale-y-125" : "", // optional last-beat emphasis
-						)}
-						title={
-							beat
-								? `Status: ${beat.status}\nResponse Time: ${beat.responseTime}ms\nTime: ${new Date(
-										beat.timestamp,
-									).toLocaleString()}`
-								: "No data"
-						}
-					/>
-				);
-			})}
+		<div className="flex h-5 w-full items-end gap-1" role="img" aria-label={`Last ${Math.min(latest.length, 10)} checks`}>
+			{slots.map((beat, index) => (
+				<motion.div
+					// biome-ignore lint/suspicious/noArrayIndexKey: slots are positional
+					key={beat?._id || `empty-${index}`}
+					className={cx("h-full flex-1 origin-bottom rounded-[2px]", beat ? tone(beat.status) : "bg-line")}
+					initial={reduce ? false : { scaleY: 0.2, opacity: 0 }}
+					animate={{ scaleY: 1, opacity: 1 }}
+					transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1], delay: reduce ? 0 : index * 0.025 }}
+					title={
+						beat
+							? `Status ${beat.status} · ${beat.responseTime} ms · ${new Date(beat.timestamp).toLocaleString()}`
+							: "No data"
+					}
+				/>
+			))}
 		</div>
 	);
 };
