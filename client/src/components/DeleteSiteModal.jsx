@@ -34,17 +34,16 @@ const DeleteSiteModal = ({ siteName, open, onOpenChange, onConfirm }) => {
 			<DialogContent className="sm:max-w-[425px]">
 				<form onSubmit={handleSubmit}>
 					<DialogHeader>
-						<DialogTitle>Delete Site</DialogTitle>
+						<DialogTitle>Delete monitor</DialogTitle>
 						<DialogDescription>
 							Are you sure you want to delete{" "}
-							<span className="font-bold">{siteName}</span>? This action cannot
-							be undone.
+							<span className="font-semibold text-ink">{siteName}</span>? Its history goes with it.
 						</DialogDescription>
 					</DialogHeader>
 
 					<div className="grid gap-4 py-4">
 						<div className="grid grid-cols-4 items-center gap-4">
-							<Label htmlFor="password" className="text-right">
+							<Label htmlFor={passwordId} className="text-right text-[12px] font-medium text-mute">
 								Password
 							</Label>
 							<Input
@@ -62,7 +61,7 @@ const DeleteSiteModal = ({ siteName, open, onOpenChange, onConfirm }) => {
 
 					<DialogFooter>
 						<Button type="submit" variant="destructive" disabled={isPending}>
-							{isPending ? "Deleting..." : "Delete Site"}
+							{isPending ? "Deleting…" : "Delete monitor"}
 						</Button>
 					</DialogFooter>
 				</form>

@@ -1,36 +1,39 @@
 module.exports = {
 	apps: [
 		{
-			name: "api-server",
+			name: "server",
 			script: "./src/server.js",
 			interpreter: "bun",
-
-			env_dev: {
+			instances: "max",
+			exec_mode: "cluster",
+			autorestart: true,
+			watch: false,
+			env: {
 				NODE_ENV: "development",
 				PORT: 5000,
 			},
-			env_prod: {
+			env_production: {
 				NODE_ENV: "production",
+				MONGO_URI:
+					"mongodb://ezmon:ezmon@mongo:27017/ezmon?authSource=admin&retryWrites=true&w=majority&connectTimeoutMS=10000",
 				PORT: 5000,
-				instances: "max",
-				exec_mode: "cluster",
 			},
 		},
 		{
-			// --- Your Background Worker ---
-			name: "fanout-worker",
+			name: "worker",
 			script: "./src/worker.js",
 			interpreter: "bun",
-
 			instances: 1,
 			exec_mode: "fork",
-
-			// --- Environment-Specific Settings ---
-			env_dev: {
+			autorestart: true,
+			watch: false,
+			env: {
 				NODE_ENV: "development",
 			},
-			env_prod: {
+			env_production: {
 				NODE_ENV: "production",
+				MONGO_URI:
+					"mongodb://ezmon:ezmon@mongo:27017/ezmon?authSource=admin&retryWrites=true&w=majority&connectTimeoutMS=10000",
 			},
 		},
 	],

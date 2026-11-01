@@ -4,6 +4,7 @@ import { openapi } from "@elysiajs/openapi";
 import mongoose from "mongoose";
 
 import monModule from "./modules/mon";
+import publicModule from "./modules/public";
 
 import logger from "./utils/logger";
 
@@ -29,9 +30,7 @@ const startServer = async () => {
 		.get("/", () => file("./dist/index.html"))
 		.use(openapi())
 		.use(monModule)
-		.get("*", ({ status }) => {
-			status(404, { message: "Not found" });
-		});
+		.use(publicModule);
 
 	try {
 		app.listen(PORT);

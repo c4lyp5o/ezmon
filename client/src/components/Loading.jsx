@@ -1,11 +1,9 @@
-import { Loader2 } from "lucide-react";
+import { Loading as EzLoading } from "@/ez/ui";
 
-const Loading = () => {
-	return (
-		<div className="flex justify-center items-center h-screen">
-			<Loader2 className="h-10 w-10 animate-spin text-primary" />
-		</div>
-	);
-};
+const Loading = () => (
+	<div className="flex h-dvh items-center justify-center">
+		<EzLoading label="Loading monitors…" />
+	</div>
+);
 
 export default Loading;

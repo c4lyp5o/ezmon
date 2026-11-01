@@ -4,12 +4,12 @@ const SiteSchema = new mongoose.Schema(
 	{
 		name: {
 			type: String,
-			required: [true, "Site name is required."],
+			required: [true, "Site name required."],
 			trim: true,
 		},
 		url: {
 			type: String,
-			required: [true, "URL is required."],
+			required: [true, "URL required."],
 			unique: true,
 			trim: true,
 		},
@@ -28,11 +28,75 @@ const SiteSchema = new mongoose.Schema(
 		lastStatusChangeAt: {
 			type: Date,
 		},
-		// soon..
-		// interval: {
-		// 	type: Number,
-		// 	default: 60, // in seconds
-		// },
+		// Per-site check cadence, in seconds.
+		interval: {
+			type: Number,
+			min: 15,
+			default: 60,
+		},
+		// Advanced check configuration.
+		check: {
+			method: {
+				type: String,
+				enum: ["GET", "POST", "HEAD", "PUT", "PATCH", "DELETE"],
+				default: "GET",
+			},
+			headers: {
+				type: Map,
+				of: String,
+				default: {},
+			},
+			expectedStatus: {
+				type: Number,
+				default: 200,
+			},
+			timeoutMs: {
+				type: Number,
+				min: 1000,
+				max: 60000,
+				default: 5000,
+			},
+			body: {
+				type: String,
+				default: "",
+			},
+			// SSL certificate monitoring. When enabled and a domain is present,
+			// the worker also checks cert expiry and stores days-remaining on the site.
+			ssl: {
+				type: Boolean,
+				default: false,
+			},
+			sslDaysBeforeExpiry: {
+				type: Number,
+				min: 3,
+				default: 14,
+				// 0 = only alerting when already expired; otherwise alert N days before.
+			},
+		},
+		// Alerting configuration.
+		alerts: {
+			disabled: { type: Boolean, default: false },
+			onlyOnStatusChange: { type: Boolean, default: true },
+			notifyOnRecovery: { type: Boolean, default: true },
+			// Providers disable individually; all are also gated by env keys.
+			telegram: { type: Boolean, default: false },
+			discord: { type: Boolean, default: false },
+			slack: { type: Boolean, default: false },
+			email: { type: Boolean, default: false },
+		},
+		// SSL state surfaced to the API/UI.
+		sslStatus: {
+			valid: { type: Boolean, default: true },
+			daysRemaining: { type: Number, default: null },
+			warning: { type: Boolean, default: false },
+			expired: { type: Boolean, default: false },
+			checkedAt: { type: Date, default: null },
+		},
+		responseTimeMs: {
+			type: Number,
+			default: 0,
+			// last known full-page latency, used for the UI's "latency now".
+		},
 	},
 	{
 		timestamps: true,
