@@ -1,7 +1,7 @@
 # ============================
 # Stage 1: Builder
 # ============================
-FROM oven/bun:1.3-alpine AS builder
+FROM oven/bun:1.4.5-alpine AS builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ RUN cd client && bun install && bun run build
 # ============================
 # Stage 2: Production
 # ============================
-FROM oven/bun:1.3-alpine
+FROM oven/bun:1.4.5-alpine
 
 WORKDIR /app
 
