@@ -4,6 +4,9 @@ All notable changes to ezmon are recorded here. The format follows [Keep a Chang
 
 ## [Unreleased]
 
+### Changed
+- Header, sidebar and sign-in use the shared ez `Brand`: the ez icon and the lowercase name.
+
 ## [1.0.1] - 2026-11-22
 
 ### Changed
