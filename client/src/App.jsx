@@ -87,7 +87,7 @@ const App = () => {
 
 	// Loading and error states render inside the same ez shell as the
 	// dashboard, so the brand, theme toggle and footer never disappear.
-	const brand = <Brand name="ezmon" glyph="mn" scope="Uptime monitor" />;
+	const brand = <Brand name="ezmon" scope="Uptime monitor" />;
 	if (isLoading || error)
 		return (
 			<Shell brand={brand} title="Monitors" screenKey={error ? "error" : "loading"}>
