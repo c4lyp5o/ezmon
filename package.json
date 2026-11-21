@@ -16,18 +16,24 @@
 		"start": "pm2-runtime start ecosystem.config.js --env production",
 		"stop": "pm2 stop all",
 		"restart": "pm2 restart all",
-		"logs": "pm2 monit"
+		"logs": "pm2 monit",
+		"lint": "biome lint .",
+		"lint:fix": "biome lint --write .",
+		"test:backend": "bun test tests",
+		"test:frontend": "cd client && bun run test",
+		"test": "bun run test:backend && bun run test:frontend"
 	},
 	"dependencies": {
-		"@elysiajs/openapi": "^1.4.11",
-		"@elysiajs/static": "^1.4.6",
-		"cron": "^4.3.3",
-		"deadslog": "^1.2.2",
-		"elysia": "^1.4.15",
-		"mongoose": "^8.19.2"
+		"@elysiajs/openapi": "^1.4.17",
+		"@elysiajs/static": "^1.4.12",
+		"cron": "^4.4.1",
+		"deadslog": "^2.0.0",
+		"elysia": "^1.4.32",
+		"mongoose": "^9.12.3"
 	},
 	"devDependencies": {
 		"@types/bun": "latest",
-		"concurrently": "^9.2.1"
+		"concurrently": "^10.0.7",
+		"@biomejs/biome": "2.6.8"
 	}
 }

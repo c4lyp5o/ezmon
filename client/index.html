@@ -2,7 +2,8 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#171719" />
     <script>
@@ -10,11 +11,11 @@
       // paint. One rule — a stored choice wins, otherwise DARK.
       (function () {
         try {
-          var t = localStorage.getItem('ez.theme') === 'light' ? 'light' : 'dark';
-          var r = document.documentElement;
+          const t = localStorage.getItem('ez.theme') === 'light' ? 'light' : 'dark';
+          const r = document.documentElement;
           r.classList.toggle('dark', t === 'dark');
           r.classList.toggle('light', t === 'light');
-          var m = document.querySelector('meta[name="theme-color"]');
+          const m = document.querySelector('meta[name="theme-color"]');
           if (m) m.setAttribute('content', t === 'dark' ? '#171719' : '#f9fafb');
         } catch (e) { /* class="dark" is already on <html> */ }
       })();

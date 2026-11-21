@@ -155,3 +155,7 @@ docker compose up -d
 * [PM2](https://pm2.keymetrics.io/)
 * [React](https://reactjs.org/)
 * [Vite](https://vitejs.dev/)
+
+## Development
+
+Setup, commands, tests, linting and the `development` → `master` release flow are in [DEVELOPER.md](DEVELOPER.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md).

@@ -15,6 +15,10 @@ services:
     depends_on:
       - mongo
     restart: always
+    # API_KEY, alert webhooks etc.; the Mongo URI is set in ecosystem.config.js.
+    env_file:
+      - path: .env
+        required: false
 
 volumes:
   mongo_data:

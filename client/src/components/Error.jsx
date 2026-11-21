@@ -2,7 +2,7 @@ import { Screen } from "@/ez/motion";
 import { btn, cx, Notice } from "@/ez/ui";
 
 const ErrorPage = ({ message }) => (
-	<div className="flex h-dvh items-center justify-center px-4">
+	<div className="flex items-center justify-center py-16">
 		<Screen className="w-full max-w-md">
 			<Notice tone="bad">
 				<div className="font-medium">Could not load the monitors</div>
