@@ -1,46 +1,42 @@
-# ============================
-# Stage 1: Builder
-# ============================
-FROM oven/bun:1.3-alpine AS builder
+# ez standard Dockerfile: a build stage for the frontend bundle, then an Alpine
+# runtime that runs as the unprivileged `bun` user (uid 1000) with a wget
+# healthcheck. Keep the Bun version in step with `bun-version` in .github/workflows.
 
+# ---- build: frontend bundle ----
+FROM oven/bun:1.4.5-alpine AS build
 WORKDIR /app
-
-# Install backend deps
-COPY package*.json ./
-RUN bun install
-
-# Copy client and build it
+COPY client/package.json client/bun.lock ./client/
+RUN cd client && bun install --frozen-lockfile
+COPY package.json ./
 COPY client ./client
-RUN cd client && bun install && bun run build
+RUN cd client && bun run build
 
-
-# ============================
-# Stage 2: Production
-# ============================
-FROM oven/bun:1.3-alpine
-
+# ---- runtime ----
+FROM oven/bun:1.4.5-alpine
+ARG APP_VERSION=dev
+LABEL org.opencontainers.image.title="ezmon" \
+	org.opencontainers.image.source="https://github.com/c4lyp5o/ezmon" \
+	org.opencontainers.image.licenses="MIT" \
+	org.opencontainers.image.version="$APP_VERSION"
+RUN apk add --no-cache tzdata
+ENV TZ=Asia/Kuala_Lumpur \
+	NODE_ENV=production \
+	HOST=0.0.0.0 \
+	PORT=5000 \
+	DATA_DIR=/data
 WORKDIR /app
-
-# Install system deps
-RUN apk add --no-cache tzdata curl
-ENV TZ=Asia/Kuala_Lumpur
-
-# Only install production deps for backend
-COPY package*.json ./
-RUN bun install --production
-
-# Copy backend
+# pm2-runtime supervises the processes; installed as root into /opt/bun, run as bun.
+ENV BUN_INSTALL=/opt/bun PATH="/opt/bun/bin:${PATH}"
+RUN bun add -g pm2
+COPY package.json bun.lock ./
+RUN bun install --production --frozen-lockfile --ignore-scripts
 COPY src ./src
 COPY ecosystem.config.js ./
-COPY .env ./
-
-# Copy built client bundle
-COPY --from=builder /app/dist ./dist
-
-# Install PM2 globally using Bun
-RUN bun add -g pm2
-
+COPY --from=build /app/dist ./dist
+RUN mkdir -p /data /data/logs && chown -R bun:bun /data /data/logs
+USER bun
+VOLUME ["/data"]
 EXPOSE 5000
-
-# If you use PM2 ecosystem
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --start-interval=2s --retries=3 \
+	CMD wget -qO- "http://127.0.0.1:${PORT}/" >/dev/null || exit 1
 CMD ["bun", "start"]

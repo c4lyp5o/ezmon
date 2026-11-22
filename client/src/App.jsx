@@ -11,7 +11,11 @@ import ErrorPage from "./components/Error";
 import Loading from "./components/Loading";
 import SiteCard from "./components/SiteCard";
 
-const fetcher = (url) => fetch(url).then((res) => res.json());
+const fetcher = async (url) => {
+	const res = await fetch(url);
+	if (!res.ok) throw new Error(`Server responded ${res.status}`);
+	return res.json();
+};
 
 const STATUS_FILTERS = [
 	{ key: "all", label: "All" },
@@ -81,14 +85,22 @@ const App = () => {
 		return list;
 	}, [sites, statusFilter, search, sortBy]);
 
-	if (isLoading) return <Loading />;
-	if (error) return <ErrorPage message={error.message} />;
+	// Loading and error states render inside the same ez shell as the
+	// dashboard, so the brand, theme toggle and footer never disappear.
+	const brand = <Brand name="ezmon" scope="Uptime monitor" />;
+	if (isLoading || error)
+		return (
+			<Shell brand={brand} title="Monitors" screenKey={error ? "error" : "loading"}>
+				{error ? <ErrorPage message={error.message} /> : <Loading />}
+			</Shell>
+		);
 
 	const worst = counts.down > 0 ? "bad" : counts.failing > 0 ? "warn" : "ok";
 
 	return (
 		<Shell
-			brand={<Brand name="ezmon" glyph="mn" scope="Uptime monitor" />}
+			brand={brand}
+			screenKey="monitors"
 			title="Monitors"
 			sub="Every site, its last ten checks and its response time."
 			aside={<AddSiteModal key={sites.length} onAdd={() => mutate()} />}
