@@ -15,10 +15,13 @@ services:
     depends_on:
       - mongo
     restart: always
-    # API_KEY, alert webhooks etc.; the Mongo URI is set in ecosystem.config.js.
+    # MONGO_URI, API_KEY, alert webhooks etc. come from .env, for example
+    # MONGO_URI=mongodb://ezmon:<password>@mongo:27017/ezmon?authSource=admin
     env_file:
       - path: .env
         required: false
+    volumes:
+      - ./ezmon-data:/data   # logs/ (rotated); ezmon's own data is in Mongo
 
 volumes:
   mongo_data:

@@ -10,6 +10,7 @@ All notable changes to ezmon are recorded here. The format follows [Keep a Chang
 - Removed a hardcoded MongoDB connection string (with credentials) from `ecosystem.config.js`, which also overrode the runtime `MONGO_URI`. Set `MONGO_URI` in the environment.
 
 ### Changed
+- Logs go to the console (`docker logs`) and to rotating files in `$DATA_DIR/logs` (`ezmon.log` (plus `ezmon-<n>.log` per extra cluster instance) and `ezmon-worker.log`): 5 MB per file, 3 files kept. Each process writes its own file. Mount `/data` to keep them.
 - The Docker image follows the ez standard: Alpine, runs as the unprivileged `bun` user (uid 1000), and a `HEALTHCHECK` that reports healthy within seconds of start.
 - CI is two workflows, `test.yml` and `publish.yml`. Merging to `master` publishes `:<version>`, `:latest` and `:sha-<commit>` after the tests (and an image boot check) pass; a `vX.Y.Z` tag is optional and adds a GitHub Release.
 - Every push to `development` publishes `:development` and `:sha-<commit>` after the tests, so unreleased changes can be tried without touching `master`.
