@@ -22,7 +22,8 @@ RUN apk add --no-cache tzdata
 ENV TZ=Asia/Kuala_Lumpur \
 	NODE_ENV=production \
 	HOST=0.0.0.0 \
-	PORT=5000
+	PORT=5000 \
+	DATA_DIR=/data
 WORKDIR /app
 # pm2-runtime supervises the processes; installed as root into /opt/bun, run as bun.
 ENV BUN_INSTALL=/opt/bun PATH="/opt/bun/bin:${PATH}"
@@ -32,8 +33,9 @@ RUN bun install --production --frozen-lockfile --ignore-scripts
 COPY src ./src
 COPY ecosystem.config.js ./
 COPY --from=build /app/dist ./dist
-RUN mkdir -p /app/logs && chown -R bun:bun /app/logs
+RUN mkdir -p /data /data/logs && chown -R bun:bun /data /data/logs
 USER bun
+VOLUME ["/data"]
 EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --start-interval=2s --retries=3 \
 	CMD wget -qO- "http://127.0.0.1:${PORT}/" >/dev/null || exit 1

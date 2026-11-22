@@ -9,6 +9,7 @@ module.exports = {
 			autorestart: true,
 			watch: false,
 			env: {
+				EZ_LOG_NAME: "server",
 				NODE_ENV: "development",
 				PORT: 5000,
 			},
@@ -28,6 +29,7 @@ module.exports = {
 			autorestart: true,
 			watch: false,
 			env: {
+				EZ_LOG_NAME: "worker",
 				NODE_ENV: "development",
 			},
 			env_production: {
