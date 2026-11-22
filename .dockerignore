@@ -9,3 +9,12 @@ Dockerfile
 docker-compose.yml
 .env
 .env.*
+
+# ez standard
+.github
+**/node_modules
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log
+coverage
